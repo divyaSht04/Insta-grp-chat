@@ -7,6 +7,12 @@
     "node": ">=24"
   },
   "devDependencies": {
+    "@nestjs/cli": "^11.0.23",
     "turbo": "^2.9.18"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
   }
 }
