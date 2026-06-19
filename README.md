@@ -44,7 +44,7 @@ Both `apps/web` and `apps/api` depend on `@repo/shared`:
 "@repo/shared": "workspace:*"
 ```
 
-`workspace:*` is a pnpm protocol that means *"use the local copy of this package inside this repo, whatever version it currently is."*
+`workspace:*` is a pnpm protocol that means _"use the local copy of this package inside this repo, whatever version it currently is."_
 
 ---
 
@@ -54,11 +54,11 @@ Both `apps/web` and `apps/api` depend on `@repo/shared`:
 
 `pnpm` is a package manager — like `npm` or `yarn` — but it solves two big problems with npm:
 
-| Problem with npm | How pnpm fixes it |
-|---|---|
-| Every project downloads its own copy of every package | pnpm stores packages **once globally** and hard-links them |
-| `node_modules` balloons to hundreds of MB per project | Much smaller because packages are shared |
-| Phantom dependencies (you can import packages you didn't declare) | Strict isolation — you can only use what you declared |
+| Problem with npm                                                  | How pnpm fixes it                                          |
+| ----------------------------------------------------------------- | ---------------------------------------------------------- |
+| Every project downloads its own copy of every package             | pnpm stores packages **once globally** and hard-links them |
+| `node_modules` balloons to hundreds of MB per project             | Much smaller because packages are shared                   |
+| Phantom dependencies (you can import packages you didn't declare) | Strict isolation — you can only use what you declared      |
 
 ### How pnpm stores packages
 
@@ -91,9 +91,10 @@ allowBuilds:
   sharp: true           ← allow native build for image processing
 ```
 
-This file tells pnpm: *"treat every folder under `apps/` and `packages/` as a workspace package."*
+This file tells pnpm: _"treat every folder under `apps/` and `packages/` as a workspace package."_
 
 When you run `pnpm install` from the root, pnpm:
+
 1. Reads `pnpm-workspace.yaml`
 2. Discovers `web`, `api`, and `@repo/shared`
 3. Installs all their dependencies into the right places
@@ -141,6 +142,7 @@ pnpm --filter api build
 You have three packages: `shared`, `web`, and `api`. If you change `shared`, you need to rebuild it before `web` and `api` can use the update. In a plain pnpm workspace you'd have to manually figure out the order and run commands one by one.
 
 Turborepo solves this by:
+
 1. Understanding the **dependency graph** between your packages
 2. Running tasks in the **correct order** automatically
 3. **Caching** task outputs so it never rebuilds something that hasn't changed
@@ -164,7 +166,6 @@ Turborepo solves this by:
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
-
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**"]
@@ -192,7 +193,7 @@ Turborepo solves this by:
 }
 ```
 
-- `"^build"` — the caret (`^`) means *"before building me, build all my workspace dependencies."*  
+- `"^build"` — the caret (`^`) means _"before building me, build all my workspace dependencies."_  
   So when you run `turbo build` on `apps/api`, Turborepo sees that `api` depends on `@repo/shared`, so it runs `shared`'s build script first automatically.
 - `outputs` — tells Turbo what folders to **cache**. If none of the source files changed, Turbo restores `dist/` and `.next/` from cache instead of re-running the build.
 
@@ -220,6 +221,7 @@ Second run (nothing changed):
 ```
 
 When you run `pnpm dev` from the root:
+
 1. Turbo builds `@repo/shared` (because `^build`)
 2. Turbo starts `next dev` in `apps/web` and `nest start --watch` in `apps/api` **in parallel**
 3. Both dev servers run simultaneously — you get HMR on the frontend and auto-reload on the backend from a single terminal command
@@ -244,6 +246,7 @@ No `dependsOn` — lint jobs have no ordering requirement, so Turbo runs all of 
 ```
 
 When you type `pnpm dev`:
+
 - pnpm runs `turbo run dev` at the root
 - Turborepo reads `turbo.json`, resolves the dependency graph
 - Builds `@repo/shared` first
@@ -298,26 +301,26 @@ pnpm build
 
 ## Quick Reference
 
-| Command | What it does |
-|---|---|
-| `pnpm install` | Install all deps across all packages |
-| `pnpm dev` | Build shared, then start all dev servers in parallel |
-| `pnpm build` | Build all packages in dependency order |
-| `pnpm lint` | Lint all packages in parallel |
-| `pnpm --filter web add <pkg>` | Add a package only to `apps/web` |
-| `pnpm --filter api add <pkg>` | Add a package only to `apps/api` |
-| `pnpm --filter @repo/shared add <pkg>` | Add a package only to `packages/shared` |
+| Command                                | What it does                                         |
+| -------------------------------------- | ---------------------------------------------------- |
+| `pnpm install`                         | Install all deps across all packages                 |
+| `pnpm dev`                             | Build shared, then start all dev servers in parallel |
+| `pnpm build`                           | Build all packages in dependency order               |
+| `pnpm lint`                            | Lint all packages in parallel                        |
+| `pnpm --filter web add <pkg>`          | Add a package only to `apps/web`                     |
+| `pnpm --filter api add <pkg>`          | Add a package only to `apps/api`                     |
+| `pnpm --filter @repo/shared add <pkg>` | Add a package only to `packages/shared`              |
 
 ---
 
 ## Key files at a glance
 
-| File | Purpose |
-|---|---|
-| `pnpm-workspace.yaml` | Declares which folders are workspace packages |
-| `turbo.json` | Defines tasks, their dependencies, and caching rules |
-| `package.json` (root) | Pins pnpm version, holds root-level devDeps and scripts |
-| `apps/web/package.json` | Next.js app, declares `@repo/shared` as a dep |
-| `apps/api/package.json` | NestJS app, declares `@repo/shared` as a dep |
-| `packages/shared/package.json` | Shared types package, name `@repo/shared` |
-| `.nvmrc` | Pins Node.js to version 24 |
+| File                           | Purpose                                                 |
+| ------------------------------ | ------------------------------------------------------- |
+| `pnpm-workspace.yaml`          | Declares which folders are workspace packages           |
+| `turbo.json`                   | Defines tasks, their dependencies, and caching rules    |
+| `package.json` (root)          | Pins pnpm version, holds root-level devDeps and scripts |
+| `apps/web/package.json`        | Next.js app, declares `@repo/shared` as a dep           |
+| `apps/api/package.json`        | NestJS app, declares `@repo/shared` as a dep            |
+| `packages/shared/package.json` | Shared types package, name `@repo/shared`               |
+| `.nvmrc`                       | Pins Node.js to version 24                              |

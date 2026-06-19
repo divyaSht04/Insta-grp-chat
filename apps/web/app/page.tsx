@@ -1,8 +1,8 @@
-import type { PublicUser } from "@repo/shared";
+import type { PublicUser } from '@repo/shared';
 
 const demoUser: PublicUser = {
-  id: "1",
-  displayName: "Ada Lovelace",
+  id: '1',
+  displayName: 'Ada Lovelace',
   avatarUrl: null,
 };
 

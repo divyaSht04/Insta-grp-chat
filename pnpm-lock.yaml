@@ -11,6 +11,9 @@ importers:
       '@nestjs/cli':
         specifier: ^11.0.23
         version: 11.0.23(@types/node@25.9.3)(prettier@3.8.4)
+      prettier:
+        specifier: ^3.8.4
+        version: 3.8.4
       turbo:
         specifier: ^2.9.18
         version: 2.9.18

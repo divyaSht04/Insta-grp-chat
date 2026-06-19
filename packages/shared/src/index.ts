@@ -1,6 +1,6 @@
 export enum ConversationType {
-  DIRECT = "DIRECT",
-  GROUP = "GROUP",
+  DIRECT = 'DIRECT',
+  GROUP = 'GROUP',
 }
 
 export interface PublicUser {
