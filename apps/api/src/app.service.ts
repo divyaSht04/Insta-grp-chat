@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import type { PublicUser } from '@repo/shared';
+import { PrismaService } from './prisma/prisma.service';
 
 @Injectable()
 export class AppService {
+  constructor(private readonly prisma: PrismaService) {}
+
   getHello(): string {
     return 'Hello World!';
   }
 
-  getDemoUser(): PublicUser {
-    return {
-      id: '1',
-      displayName: 'Ada Lovelace',
-      avatarUrl: null,
-    };
+  getUsers() {
+    return this.prisma.user.findMany();
+  }
+
+  createUser(email: string) {
+    return this.prisma.user.create({ data: { email } });
   }
 }
