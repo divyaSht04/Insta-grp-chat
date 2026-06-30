@@ -15,7 +15,12 @@ model User {
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
 
-  profile      Profile?
+  profile Profile?
+
+  sentFollowRequests     FollowRequest[] @relation("SentFollowRequests")
+  receivedFollowRequests FollowRequest[] @relation("ReceivedFollowRequests")
+  following              Follow[]        @relation("Following")
+  followers              Follow[]        @relation("Followers")
 
   @@map("users")
 }
@@ -32,4 +37,32 @@ model Profile {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("profiles")
+}
+
+model FollowRequest {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  senderId   String   @db.Uuid
+  receiverId String   @db.Uuid
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("SentFollowRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedFollowRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@index([receiverId])
+  @@map("follow_requests")
+}
+
+model Follow {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  followerId  String   @db.Uuid
+  followingId String   @db.Uuid
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followingId])
+  @@map("follows")
 }
