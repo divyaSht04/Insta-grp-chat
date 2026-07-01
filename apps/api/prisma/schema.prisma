@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ConversationType {
+  DIRECT
+  GROUP
+}
+
+enum ParticipantRole {
+  ADMIN
+  MEMBER
+}
+
 model User {
   id           String    @id @default(uuid(7)) @db.Uuid
   email        String    @unique
@@ -21,6 +31,7 @@ model User {
   receivedFollowRequests FollowRequest[] @relation("ReceivedFollowRequests")
   following              Follow[]        @relation("Following")
   followers              Follow[]        @relation("Followers")
+  participants           Participant[]
 
   @@map("users")
 }
@@ -65,4 +76,32 @@ model Follow {
   @@unique([followerId, followingId])
   @@index([followingId])
   @@map("follows")
+}
+
+model Conversation {
+  id        String           @id @default(uuid(7)) @db.Uuid
+  type      ConversationType
+  name      String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  deletedAt DateTime?
+
+  participants Participant[]
+
+  @@map("conversations")
+}
+
+model Participant {
+  id             String          @id @default(uuid(7)) @db.Uuid
+  conversationId String          @db.Uuid
+  userId         String          @db.Uuid
+  role           ParticipantRole @default(MEMBER)
+  joinedAt       DateTime        @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+  @@map("participants")
 }
